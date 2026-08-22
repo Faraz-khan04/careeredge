@@ -1,0 +1,596 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 24% 97%;
+    --foreground: 224 40% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 40% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 33% 9%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 16% 95%;
+    --secondary-foreground: 222 33% 12%;
+
+    --muted: 220 16% 95%;
+    --muted-foreground: 220 12% 40%;
+
+    --accent: 220 16% 95%;
+    --accent-foreground: 222 33% 12%;
+
+    --destructive: 351 86% 56%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 18% 88%;
+    --input: 220 18% 84%;
+    --ring: 221 83% 53%;
+
+    --lift: 160 84% 32%;
+    --caution: 33 88% 45%;
+    --drop: 351 78% 52%;
+
+    --accent-2: 265 70% 55%;
+    --glow: 190 85% 40%;
+    --signal: 152 66% 35%;
+
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 230 24% 4%;   /* #08090D */
+    --foreground: 210 16% 96%;
+
+    --accent-2: 265 85% 66%;
+    --glow: 190 95% 55%;        /* cyan ambient */
+    --signal: 152 76% 45%;      /* live radar dot */
+
+    --card: 232 16% 7%;
+    --card-foreground: 210 16% 95%;
+
+    --popover: 240 6% 10%;
+    --popover-foreground: 210 14% 93%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 210 14% 93%;
+
+    --muted: 240 5% 14%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 240 5% 16%;
+    --accent-foreground: 210 14% 93%;
+
+    --destructive: 351 86% 64%;
+    --destructive-foreground: 240 8% 8%;
+
+    --border: 240 5% 23%;
+    --input: 240 5% 25%;
+    --ring: 217 91% 60%;
+
+    --lift: 158 74% 52%;
+    --caution: 36 86% 59%;
+    --drop: 351 86% 66%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Numerals in data surfaces are tabular so columns of money line up. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-eyebrow uppercase text-muted-foreground;
+  }
+
+  /* Hairline grid backdrop behind the hero and the quadrant matrix. The
+     radial mask fades it out rather than letting it hit a hard edge. */
+  .grid-backdrop {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.55) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.55) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  }
+
+  .paywall-blur {
+    filter: blur(7px);
+    user-select: none;
+    pointer-events: none;
+  }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------- *
+   * Depth
+   * ---------------------------------------------------------------- */
+
+  /* Ambient light source behind the hero. Two offset colour fields so the
+     background has somewhere to travel rather than sitting flat. */
+  .aurora::before {
+    content: "";
+    position: absolute;
+    inset: -30% -10% auto -10%;
+    height: 70%;
+    background:
+      radial-gradient(50% 55% at 25% 30%, hsl(var(--glow) / 0.22), transparent 70%),
+      radial-gradient(45% 50% at 75% 20%, hsl(var(--accent-2) / 0.18), transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  /* Cards catch light at the top edge, the way a real surface would. */
+  .surface {
+    background-image: linear-gradient(
+      to bottom,
+      hsl(0 0% 100% / 0.05),
+      hsl(0 0% 100% / 0.01) 40%,
+      transparent
+    );
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.07),
+      0 1px 2px hsl(0 0% 0% / 0.4),
+      0 8px 24px -12px hsl(0 0% 0% / 0.6);
+  }
+
+  .surface-hover {
+    transition:
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 300ms ease,
+      box-shadow 300ms ease;
+  }
+
+  .surface-hover:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.1),
+      0 2px 4px hsl(0 0% 0% / 0.4),
+      0 20px 40px -16px hsl(var(--glow) / 0.35);
+  }
+
+  .text-gradient {
+    background-image: linear-gradient(
+      110deg,
+      hsl(var(--foreground)) 25%,
+      hsl(var(--glow)) 55%,
+      hsl(var(--accent-2)) 80%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Hairline that fades out at both ends instead of stopping dead. */
+  .rule-fade {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      hsl(var(--border)) 20%,
+      hsl(var(--border)) 80%,
+      transparent
+    );
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Motion
+   * ---------------------------------------------------------------- */
+
+  /* Scroll reveal. Elements start displaced and settle when the observer
+     adds .is-visible. Nothing is hidden without JS: if the observer never
+     fires, the fallback below leaves content fully visible. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Continuous ticker for the market list. */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 42s linear infinite;
+  }
+
+  .marquee-mask {
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* A slow sweep across the primary button, so the main action has a pulse
+     without demanding attention. */
+  .sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 30%,
+      hsl(0 0% 100% / 0.18) 50%,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+    animation: sheen 5s ease-in-out infinite;
+  }
+
+  @keyframes sheen {
+    0%, 60% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; }
+    .marquee { animation: none; }
+    .sheen::after { animation: none; content: none; }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Range slider
+   * ---------------------------------------------------------------- */
+
+  .range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 999px;
+    background: hsl(var(--secondary));
+    outline: none;
+    cursor: pointer;
+  }
+
+  .range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: hsl(var(--primary));
+    border: 2px solid hsl(var(--background));
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.5), 0 0 12px hsl(var(--glow) / 0.5);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+  }
+
+  .range-slider::-webkit-slider-thumb:hover,
+  .range-slider:focus-visible::-webkit-slider-thumb {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 1px hsl(var(--primary)), 0 0 18px hsl(var(--glow) / 0.75);
+  }
+
+  .range-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: hsl(var(--primary));
+    border: 2px solid hsl(var(--background));
+    box-shadow: 0 0 12px hsl(var(--glow) / 0.5);
+    cursor: pointer;
+  }
+
+  .range-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: hsl(var(--secondary));
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Terminal
+   * ---------------------------------------------------------------- */
+
+  /* Instrument panel: frosted, with a hairline of light along the top edge
+     the way a physical bezel catches a room light. */
+  .panel {
+    background-color: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(0 0% 100% / 0.08);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.1),
+      0 24px 48px -24px hsl(0 0% 0% / 0.8);
+  }
+
+  /* Corner registration marks, as on a printed chart or a trading widget. */
+  .crosshairs::before,
+  .crosshairs::after {
+    content: "";
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-color: hsl(var(--muted-foreground) / 0.45);
+    pointer-events: none;
+  }
+
+  .crosshairs::before {
+    top: 10px; left: 10px;
+    border-top: 1px solid; border-left: 1px solid;
+  }
+
+  .crosshairs::after {
+    bottom: 10px; right: 10px;
+    border-bottom: 1px solid; border-right: 1px solid;
+  }
+
+  /* Live status dot with an expanding radar ring. */
+  .radar {
+    position: relative;
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: hsl(var(--signal));
+  }
+
+  .radar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: hsl(var(--signal));
+    animation: radar 2.4s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+  }
+
+  @keyframes radar {
+    0%   { transform: scale(1);   opacity: 0.7; }
+    100% { transform: scale(4.5); opacity: 0; }
+  }
+
+  /* Aura under the primary action. */
+  .aura { position: relative; }
+
+  .aura::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: inherit;
+    background: radial-gradient(closest-side, hsl(var(--primary) / 0.55), transparent);
+    opacity: 0;
+    transition: opacity 300ms ease;
+    z-index: -1;
+  }
+
+  .aura:hover::before { opacity: 1; }
+
+  /* Waterfall segments. */
+  .segment { transition: filter 200ms ease, transform 200ms ease; }
+  .segment:hover { filter: brightness(1.25); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .radar::after { animation: none; }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Kinetic
+   * ---------------------------------------------------------------- */
+
+  /* Light passing along the waterfall bar. */
+  .beam { position: relative; }
+
+  .beam::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 35%,
+      hsl(0 0% 100% / 0.28) 50%,
+      transparent 65%
+    );
+    transform: translateX(-100%);
+    animation: beam 4.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes beam {
+    0%, 55% { transform: translateX(-100%); }
+    100%    { transform: translateX(100%); }
+  }
+
+  /* Border beam on the primary action: a conic sweep clipped to a 1px ring
+     by an inset mask, so the fill stays flat and only the edge travels. */
+  .border-beam { position: relative; isolation: isolate; }
+
+  .border-beam::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--beam-angle, 0deg),
+      transparent 0deg,
+      hsl(var(--glow)) 40deg,
+      hsl(var(--primary)) 70deg,
+      transparent 110deg,
+      transparent 360deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: spin-beam 3.5s linear infinite;
+    z-index: -1;
+  }
+
+  @property --beam-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  @keyframes spin-beam {
+    to { --beam-angle: 360deg; }
+  }
+
+  /* Cursor-following sheen on tilted cards, positioned by --gx / --gy. */
+  .tilt {
+    transform-style: preserve-3d;
+    transition: box-shadow 300ms ease;
+  }
+
+  .tilt > * { position: relative; }
+
+  .tilt::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      circle at var(--gx, 50%) var(--gy, 50%),
+      hsl(0 0% 100% / 0.07),
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 300ms ease;
+    pointer-events: none;
+  }
+
+  .tilt:hover::after { opacity: 1; }
+
+  /* Wider glass fade on the ticker edges. */
+  .marquee-mask {
+    mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .beam::after,
+    .border-beam::before { animation: none; }
+    .tilt { transform: none !important; }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Keyboard access
+   * ---------------------------------------------------------------- */
+
+  /* The custom slider thumb had no focus state, so keyboard users had no
+     idea it was selected. */
+  .range-slider:focus-visible {
+    outline: none;
+  }
+
+  .range-slider:focus-visible::-webkit-slider-thumb {
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--ring)),
+      0 0 18px hsl(var(--glow) / 0.6);
+  }
+
+  .range-slider:focus-visible::-moz-range-thumb {
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--ring));
+  }
+
+  /* Ledger rows are <summary> elements — they are focusable, so they need a
+     visible state. */
+  summary:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: -2px;
+    border-radius: var(--radius);
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  /* ---------------------------------------------------------------- *
+   * Light mode
+   *
+   * The dark theme builds depth from light catching an edge. That logic
+   * inverts on paper: surfaces sit above the page by casting a shadow, not
+   * by glowing. Every white/[0.0x] value in the markup would vanish here, so
+   * these rules override rather than translate.
+   * ---------------------------------------------------------------- */
+
+  :root:not(.dark) .panel {
+    background-color: hsl(var(--card) / 0.85);
+    border-color: hsl(var(--border));
+    box-shadow:
+      0 1px 2px hsl(224 40% 11% / 0.05),
+      0 8px 24px -14px hsl(224 40% 11% / 0.15);
+  }
+
+  :root:not(.dark) .surface-hover:hover {
+    box-shadow:
+      0 2px 4px hsl(224 40% 11% / 0.06),
+      0 18px 36px -18px hsl(var(--glow) / 0.35);
+  }
+
+  /* Hairline borders written as white/[0.06] in markup are invisible on
+     paper — restate them as real borders. */
+  :root:not(.dark) .border-white\/\[0\.06\],
+  :root:not(.dark) .border-white\/\[0\.07\],
+  :root:not(.dark) .border-white\/\[0\.08\] {
+    border-color: hsl(var(--border));
+  }
+
+  :root:not(.dark) .bg-white\/\[0\.02\],
+  :root:not(.dark) .bg-white\/\[0\.03\],
+  :root:not(.dark) .bg-white\/\[0\.04\] {
+    background-color: hsl(220 20% 95%);
+  }
+
+  :root:not(.dark) .divide-white\/\[0\.07\] > * + * {
+    border-color: hsl(var(--border));
+  }
+
+  /* The constellation is tuned for a dark ground; on paper it needs to be a
+     faint blueprint rather than glowing dust. */
+  :root:not(.dark) canvas {
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+  }
+
+  :root:not(.dark) .tilt::after {
+    background: radial-gradient(
+      circle at var(--gx, 50%) var(--gy, 50%),
+      hsl(224 40% 11% / 0.04),
+      transparent 55%
+    );
+  }
+}
