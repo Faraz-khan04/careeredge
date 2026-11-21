@@ -6,6 +6,10 @@ Career intelligence platform: two calculators that price career decisions, a com
 - **Remote Pay Equity** (`/tools/remote-pay-equity`) — converts a cross-border offer into local purchasing power
 - **Community** (`/community`) — threaded, pseudonymous discussion with live calculation embeds
 
+![CareerEdge home page](docs/screenshots/home.png)
+
+![Worked examples and the pay equity calculator](docs/screenshots/calculators.png)
+
 ---
 
 > **Next.js 15.** This project targets Next 15, where `cookies()`, `params` and
